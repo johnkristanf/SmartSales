@@ -3,15 +3,21 @@ import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import './assets/index.css'
+import GraphsPage from './pages/GraphsPage'
 
 const ROUTER = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/smartsales" replace />
+    element: <Navigate to="/smartsales/analysis" replace />
   },
   {
-    path: '/smartsales',
+    path: '/smartsales/analysis',
     element: <LandingPage />
+  },
+
+  {
+    path: '/smartsales/graphs',
+    element: <GraphsPage />
   }
 ])
 
