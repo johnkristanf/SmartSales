@@ -2,7 +2,7 @@
 function DataAnalysisSteps(){
     return (
 
-        <div className="w-full flex justify-center h-[150rem]">
+        <div className="w-full flex justify-center h-[145rem]">
 
             <div className="w-[75%] flex flex-col gap-24">
 
