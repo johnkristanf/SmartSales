@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 
 export function NavBar(){
     return(
@@ -22,17 +23,24 @@ function Logo(){
 function NavLinks(){
 
     const list = [
-        { name: "Home", href: "#home" },
-        { name: "Graphs", href: "#graphs" },
-        { name: "Contact Us", href: "#contact" },
+        { name: "Home", to: "/smartsales/analysis" },
+        { name: "Graphs", to: "/smartsales/graphs" },
+        { name: "Contact Us", to: "#contact" },
     ]
     return(
         <ul className="flex gap-16 text-white text-xl font-semibold">
             {
                 list.map((item, index) => (
-                    <li key={index} className="hover:opacity-75">
-                        <a href={item.href}>{ item.name }</a>
-                    </li>
+                    <Link
+                        key={index}  
+                        to={item.to}
+                        replace={true}
+                        className="hover:opacity-75"
+                    >
+
+                        {item.name}
+
+                    </Link>
                 ))
             }
         </ul>
