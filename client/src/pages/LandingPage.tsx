@@ -1,4 +1,5 @@
 import { NavBar } from "../components/navbar"
+import DataAnalysisSteps from "./DAsteps"
 import GraphsPage from "./GraphsPage"
 import HomePage from "./HomePage"
 
@@ -7,7 +8,10 @@ function LandingPage(){
 
         <>
             <NavBar />
+            
             <HomePage />
+
+            <DataAnalysisSteps />
 
             <GraphsPage />
         </>

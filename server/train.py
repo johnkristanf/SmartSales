@@ -78,10 +78,6 @@ def plot_return_monthly_sales(sales_data):
     print("monthly_sales.head(): ", monthly_sales.head())
     return monthly_sales
 
-def return_monthly_sales(sales_data):
-
-    monthly_sales = sales_data.resample('ME', on='Order Date')['Sales'].sum()
-    return monthly_sales
 
 def find_plot_outliers(monthly_sales):
 
@@ -190,7 +186,7 @@ def sarima_model(monthly_sales):
     order, seasonal_order = set_sarima_parameters()
 
     try:
-        model = SARIMAX(monthly_sales, order=order, seasonal_order=seasonal_order)
+        model = SARIMAX(monthly_sales.dropna(), order=order, seasonal_order=seasonal_order)
         results = model.fit()
 
         joblib.dump(results, 'sarima_model.joblib')
