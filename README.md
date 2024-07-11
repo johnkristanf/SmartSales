@@ -8,7 +8,7 @@ This project aims to provide a comprehensive platform for sales forecasting and 
 Seamless integration of sales data from various sources, ensuring clean and reliable data for analysis.
 
 ### Forecasting Models
-Implementation of advanced forecasting models (like SARIMA, LSTM, etc.) to predict future sales trends with high accuracy.
+Implementation of advanced forecasting models (like SARIMA, Prophet, etc.) to predict future sales trends with high accuracy.
 
 ### Interactive Dashboards
 Creation of interactive Tableau dashboards for visualizing historical sales data, trends, and forecasts.
@@ -38,7 +38,6 @@ Integration with backend APIs to fetch real-time sales data and update forecasts
 - Tableau
 
 ### Database
-- MySQL
 - PostgreSQL
 
 ### Deployment
@@ -68,7 +67,7 @@ Implement real-time data streaming capabilities to monitor sales metrics instant
 
 5. Start the frontend:
 
-6. Access the application at [http://localhost:3000](http://localhost:3000).
+6. Access the application at (soon to push to production).
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request for any improvements or new features.
