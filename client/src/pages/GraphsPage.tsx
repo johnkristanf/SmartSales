@@ -1,60 +1,95 @@
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import Chart from "react-google-charts";
 import { getForeCastData } from "../api/forecast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { NavBar } from "../components/navbar";
 
 const queryClient = new QueryClient();
 
 function GraphsPage() {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
-        <div className="w-full flex items-start justify-center h-[120rem]" id="graphs">
 
-            <div className="w-full flex flex-col justify-center gap-8">
-                <h1 className="text-blue-950 text-6xl font-semibold text-center">
-                    Smart Sales Forecast Graph
-                </h1>
-                <QueryClientProvider client={queryClient}>
-                    <Forecast />
-                </QueryClientProvider>
+            <>
+                <NavBar />
 
-                <SalesPerRegion />
+                <div className="w-full flex flex-col justify-center items-center gap-20 mt-12">
+
+                    <div className="flex flex-col items-center gap-8 w-full">
+                        <h1 className="text-blue-950 text-6xl font-semibold text-center">
+                            Smart Sales Forecast Graph
+                        </h1>
+
+                        <p className="font-semibold w-[70%]">
+                            The sales forecasting analysis, utilizing the SARIMA model, offers strategic 
+                            insights for business planning. By predicting future sales trends, businesses 
+                            can optimize inventory levels, allocate resources efficiently, and tailor 
+                            marketing strategies to anticipated demand. This forecast enables proactive 
+                            decision-making, helping to mitigate risks, capitalize on growth opportunities, 
+                            and maintain competitive advantage. Accurate sales predictions ensure better 
+                            financial planning, improving overall operational efficiency and profitability.
+                        </p>
+
+                        <QueryClientProvider client={queryClient}>
+                            <Forecast />
+                        </QueryClientProvider>
+                    </div>
+
+                   
+
+                    <SalesPerRegion />
+
+                    <CitiesHighestSales />
+
+                    <HighestProductsBought />
+
+                    <SalesByCategory />
+
+                    <SalesDiscount />
 
 
-            </div>
-        </div>
+                </div>
+            </>
+           
     );
 }
 
 interface SalesData {
     date: string;
-    sales: number;
+    sales: any;
 }
 
 function Forecast() {
 
+    const [selectedYear, setSelectedYear] = useState<string>();
     const [forecastPeriods, setForecastPeriods] = useState<number>(12);
     const { data, error, isLoading } = useQuery({
         queryKey: ['forecastData', forecastPeriods],
         queryFn: () => getForeCastData(forecastPeriods)
     });
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    if (isLoading){
+        return <div className="text-3xl text-orange-600 font-bold">Forecasting may take a while please wait....</div>;
+
+    } else if (error){
+        return <div className="text-3xl font-bold text-red-800">Error: {error.message}</div>;
+    } 
 
     const forecastData: SalesData[] = data?.data.forecast_data;
     const historicalData: SalesData[] = data?.data.historical_data;
 
-    // Prepare data for the chart
     const chartData = [['Date', 'Sales', { role: 'style' }]];
 
-    // Format historical data
     historicalData.forEach(({ date, sales }) => {
         const date_obj = new Date(date);
         const formattedDate = date_obj.toLocaleDateString('en-CA', { year: 'numeric', month: 'short' });
         chartData.push([formattedDate, sales, 'blue']);
     });
 
-    // Format forecast data
     forecastData.forEach(({ date, sales }) => {
         const date_obj = new Date(date);
         const formattedDate = date_obj.toLocaleDateString('en-CA', { year: 'numeric', month: 'short' });
@@ -62,7 +97,7 @@ function Forecast() {
     });
 
     const options = {
-        hAxis: { title: 'Date' },
+        hAxis: { title: 'Dates' },
         vAxis: { title: 'Sales' },
         legend: 'none',
        
@@ -73,6 +108,8 @@ function Forecast() {
         {label: "Predicted Future Sales", src: "/red_linechart.png"}
     ]
 
+    console.log("forecastingPeriods", forecastPeriods)
+
     const handleForecastPeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         queryClient.invalidateQueries({
             queryKey: ['forecastData']
@@ -81,12 +118,13 @@ function Forecast() {
         const selectedYears = parseInt(event.target.value);
         const selectedForecastPeriod = selectedYears * 12;
 
+        setSelectedYear(event.target.value)
         setForecastPeriods(selectedForecastPeriod)
     };
 
     return (
-        <div className="flex h-[35rem]">
-
+        <div className="flex h-[35rem] w-full">
+ 
             <Chart
                 chartType="LineChart"
                 width="100%"
@@ -115,12 +153,11 @@ function Forecast() {
                 <select 
                     className="bg-gray-300 p-1 rounded-md focus:outline-none font-medium " 
                     onChange={handleForecastPeriodChange}
+                    value={selectedYear}
                 >
                     <option value="1">1 year</option>
                     <option value="2">2 years</option>
                     <option value="3">3 years</option>
-                    <option value="4">4 years</option>
-                    <option value="5">5 years</option>
                 </select>
 
             </div>
@@ -137,7 +174,7 @@ function SalesPerRegion(){
 
         <>
         
-            <div className="flex flex-col items-center h-[30rem] gap-5 mt-10">
+            <div className="flex flex-col items-center h-[45rem] gap-12 mt-10">
 
                 <h1 className="text-blue-950 text-6xl font-semibold text-center">
                     Sales by Region
@@ -156,14 +193,189 @@ function SalesPerRegion(){
 
                     <img src="/sales_region.png" />
 
-                    <p className="flex gap-2 w-[90%] truncate mt-1">
-                        Tableau Link: 
-                        <a href={tableauLink}>
-                            <p className="text-blue-800 hover:opacity-75"> 
-                                { tableauLink } 
-                            </p>
+                    <div className="flex gap-2 w-[90%] truncate mt-1">
+                        <p>Tableau Link:</p>
+                        <a target="blank" href={tableauLink} className="text-blue-800 hover:underline">
+                            { tableauLink } 
                         </a>
-                    </p>
+                    </div>
+
+                    
+                </div>
+
+            </div>
+        </>
+       
+    )
+}
+
+function CitiesHighestSales(){
+
+    const tableauLink = "https://public.tableau.com/app/profile/john.kristan.torremocha/viz/SmartSalesDashboard/Dashboard1?publish=yes"
+
+    return(
+
+        <>
+        
+            <div className="flex flex-col items-center h-[45rem] gap-12 mt-10">
+
+                <h1 className="text-blue-950 text-6xl font-semibold text-center">
+                    Top 10 Cities with Highest Sales
+                </h1>
+
+                <p className="font-semibold w-[70%]">
+                    Strategic decision-making was aided by the data analysis, 
+                    which identified the top 10 cities with the largest sales. 
+                    These cities include, but are not limited to, New York, Los 
+                    Angeles, Chicago, Houston, and Phoenix. The report provides 
+                    guidance for resource allocation and marketing initiatives 
+                    aimed at optimizing revenue and market share in these important 
+                    urban locations by highlighting regional demand trends and growth 
+                    prospects.
+
+                </p>
+
+                <div className="flex flex-col items-center">
+
+                    <img src="/city_highestSales.png" />
+
+                    <div className="flex gap-2 w-[90%] truncate mt-1">
+                        <p>Tableau Link:</p>
+                        <a target="blank" href={tableauLink} className="text-blue-800 hover:underline">
+                            { tableauLink } 
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </>
+       
+    )
+}
+
+
+function HighestProductsBought(){
+
+    const tableauLink = "https://public.tableau.com/app/profile/john.kristan.torremocha/viz/SmartSalesDashboard/Dashboard1?publish=yes"
+
+    return(
+
+        <>
+        
+            <div className="flex flex-col items-center h-[35rem] gap-12 mt-10">
+
+                <h1 className="text-blue-950 text-6xl font-semibold text-center">
+                    Customer Highest Products Bought
+                </h1>
+
+                <p className="font-semibold w-[70%]">
+                    The data analysis identified the top 10 customers with the
+                    highest number of products purchased. 
+                    These key customers demonstrate significant buying behavior, 
+                    indicating strong loyalty and potential for long-term revenue. 
+                    By focusing on these high-value customers, businesses can tailor 
+                    marketing strategies and enhance customer relationships, 
+                    ultimately driving increased sales and customer retention.
+                </p>
+
+                <div className="flex flex-col items-center">
+
+                    <img src="/highest_products.png" />
+
+                    <div className="flex gap-2 w-[90%] truncate mt-1">
+                        <p>Tableau Link:</p>
+                        <a target="blank" href={tableauLink} className="text-blue-800 hover:underline">
+                            { tableauLink } 
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </>
+       
+    )
+}
+
+
+function SalesByCategory(){
+
+    const tableauLink = "https://public.tableau.com/app/profile/john.kristan.torremocha/viz/SmartSalesDashboard/Dashboard1?publish=yes"
+
+    return(
+
+        <>
+        
+            <div className="flex flex-col items-center h-[45rem] gap-12 mt-10">
+
+                <h1 className="text-blue-950 text-6xl font-semibold text-center">
+                    Sales by Category
+                </h1>
+
+                <p className="font-semibold w-[70%]">
+                    Sales were broken down by category by the data analysis, 
+                    which showed which product categories were doing the best. 
+                    Through this analysis, businesses may better identify which 
+                    categories generate the most income, which in turn helps them 
+                    focus on high-demand products, optimize inventory, and improve 
+                    marketing efforts to increase overall sales and profitability.
+                </p>
+
+                <div className="flex flex-col items-center">
+
+                    <img src="/sales_category.png" />
+
+                    <div className="flex gap-2 w-[90%] truncate mt-1">
+                        <p>Tableau Link:</p>
+                        <a target="blank" href={tableauLink} className="text-blue-800 hover:underline">
+                            { tableauLink } 
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </>
+       
+    )
+}
+
+
+
+function SalesDiscount(){
+
+    const tableauLink = "https://public.tableau.com/app/profile/john.kristan.torremocha/viz/SmartSalesDashboard/Dashboard1?publish=yes"
+
+    return(
+
+        <>
+        
+            <div className="flex flex-col items-center h-[50rem] gap-12 mt-10">
+
+                <h1 className="text-blue-950 text-6xl font-semibold text-center">
+                    Yearly Sales each year Discount
+                </h1>
+
+                <p className="font-semibold w-[70%]">
+                    Yearly sales by discount count reveals the relationship between 
+                    discount levels and sales volume. By examining how sales fluctuate with varying 
+                    discount rates, businesses can better strategize their discount offerings to boost 
+                    sales, enhance customer satisfaction, and improve overall profitability. 
+                    This insight is crucial for refining pricing strategies and optimizing promotional 
+                    efforts.
+                </p>
+
+                <div className="flex flex-col items-center">
+
+                    <img src="/sales_discount.png" />
+
+                    <div className="flex gap-2 w-[90%] truncate mt-1">
+                        <p>Tableau Link:</p>
+                        <a target="blank" href={tableauLink} className="text-blue-800 hover:underline">
+                            { tableauLink } 
+                        </a>
+                    </div>
 
                 </div>
 
