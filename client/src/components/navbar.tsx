@@ -25,7 +25,7 @@ function NavLinks(){
     const list = [
         { name: "Home", to: "/smartsales/analysis" },
         { name: "Graphs", to: "/smartsales/graphs" },
-        { name: "Contact Us", to: "#contact" },
+        { name: "Contact Us", to: "/smartsales/contactUs" },
     ]
     return(
         <ul className="flex gap-16 text-white text-xl font-semibold">

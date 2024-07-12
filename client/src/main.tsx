@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import './assets/index.css'
 import GraphsPage from './pages/GraphsPage'
+import ContactUsPage from './pages/ContactUsPage'
 
 const ROUTER = createBrowserRouter([
   {
@@ -18,7 +19,12 @@ const ROUTER = createBrowserRouter([
   {
     path: '/smartsales/graphs',
     element: <GraphsPage />
-  }
+  },
+
+  {
+    path: '/smartsales/contactUs',
+    element: <ContactUsPage />
+  },
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
