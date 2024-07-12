@@ -105,7 +105,7 @@ function Forecast() {
 
     const legend = [
         {label: "Past Sales", src: "/blue_linechart.png"},
-        {label: "Predicted Future Sales", src: "/red_linechart.png"}
+        {label: "Forecast Future Sales", src: "/red_linechart.png"}
     ]
 
     console.log("forecastingPeriods", forecastPeriods)
@@ -122,17 +122,30 @@ function Forecast() {
         setForecastPeriods(selectedForecastPeriod)
     };
 
+    const githubLink = "https://github.com/johnkristanf/SmartSales"
+
     return (
         <div className="flex h-[35rem] w-full">
+
+            <div className="w-full flex flex-col items-center justify-center">
+                <Chart
+                    chartType="LineChart"
+                    width="100%"
+                    height="100%"
+                    data={chartData}
+                    options={options}
+                    className="relative pt-3"
+                />
+
+                <div className="flex gap-2 truncate mt-1">
+                    <p>Github Link:</p>
+                        <a target="blank" href={githubLink} className="text-blue-800 hover:underline">
+                            { githubLink } 
+                        </a>
+                </div>
+            </div>
  
-            <Chart
-                chartType="LineChart"
-                width="100%"
-                height="100%"
-                data={chartData}
-                options={options}
-                className="relative pt-3"
-            />
+           
 
             <div className="flex flex-col absolute right-5 mt-5 w-56">
                 {
@@ -157,7 +170,6 @@ function Forecast() {
                 >
                     <option value="1">1 year</option>
                     <option value="2">2 years</option>
-                    <option value="3">3 years</option>
                 </select>
 
             </div>
