@@ -1,8 +1,9 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import Chart from "react-google-charts";
 import { getForeCastData } from "../api/forecast";
-import { useEffect, useState } from "react";
 import { NavBar } from "../components/navbar";
+
+const Chart = lazy(() => import("react-google-charts"));
 
 const queryClient = new QueryClient();
 
@@ -35,7 +36,11 @@ function GraphsPage() {
                         </p>
 
                         <QueryClientProvider client={queryClient}>
-                            <Forecast />
+                            <Suspense fallback={
+                                <div className="text-3xl text-orange-600 font-bold">Forecasting may take a while please wait....</div>
+                            }>
+                                <Forecast />
+                            </Suspense>
                         </QueryClientProvider>
                     </div>
 
